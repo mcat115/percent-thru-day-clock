@@ -52,12 +52,12 @@ post "/past_searches/new" do
     end
   end
 
-  parsed_response = JSON.parse(zip)
+  # parsed_response = JSON.parse(zip)
 
-  status 200
-  content_type :json
+  # status 200
+  # content_type :json
 
-  json parsed_response
+  # json parsed_response
 
 end
 
