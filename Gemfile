@@ -8,6 +8,7 @@ gem "sinatra-activerecord", "~> 2.0"
 gem "sinatra-contrib"
 gem "sinatra-flash"
 gem "faraday"
+gem "dotenv", "~> 2.2.0"
 
 group :test, :development do
   gem "pry"

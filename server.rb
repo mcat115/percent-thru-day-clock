@@ -5,11 +5,13 @@ require "sinatra/reloader" if development?
 require "pry"
 require "faraday"
 require "dotenv/load"
+require "csv"
 
-set :bind, '0.0.0.0'  # bind to all interfaces
+set :bind, '0.0.0.0' 
 set :public_folder, File.join(File.dirname(__FILE__), "public")
 CURRENT_FILE_PATH = File.dirname(__FILE__)
-# was taught to add these to sinatra apps in my boot-camp
+# server config, taught to add these at my boot-camp
+
 
 OPEN_WEATHER_API_KEY = ENV['OPEN_WEATHER_API_KEY']
 
@@ -29,33 +31,35 @@ get "/api/v1/forecast" do
   json parsed_response
 end
 
+get "/past_searches" do
+  past_searches = CSV.readlines("past_searches.csv", headers: true)
+
+  status 200
+  content_type :json
+
+  json past_searches
+end
 
 
-# get "/past_searches" do
-#   past_searches = CSV.readlines("past_searches.csv", headers: true)
+post "/past_searches/new" do
+  zip = request.body.rewind && request.body.read
+  zip = "#{zip[8]}#{zip[9]}#{zip[10]}#{zip[11]}#{zip[12]}"
+  # pulls the response from the fetch request and isolates the zip code
 
-#   binding.pry
+  if zip.length == 5
+    CSV.open("past_searches.csv", "a") do |csv|
+      csv.puts([zip])
+    end
+  end
 
-#   # parsed_response = JSON.parse(past_searches)
+  parsed_response = JSON.parse(zip)
 
-#   status 200
-#   content_type :json
+  status 200
+  content_type :json
 
-#   # json parsed_response
-#   json past_searches
-# end
+  json parsed_response
 
-
-# post "/past_searches/new" do
-#   item = params["Name"]
-#   quantity = params["Quantity"]
-
-#   if item.length > 0
-#     CSV.open("grocery_list.csv", "a") do |csv|
-#       csv.puts([item, quantity])
-#    end
-
-# end
+end
 
 
 # If the user tries to enter an unavailable path, this will route them to the available page
