@@ -14,6 +14,7 @@ const Header = (props) => {
       <PastSearches
         pastSearches={props.pastSearches}
         fetchWeather={props.fetchWeather}
+        fetchMap={props.fetchMap}
       />
     </>
   )
