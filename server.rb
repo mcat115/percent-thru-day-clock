@@ -2,18 +2,15 @@ require "sinatra"
 require "sinatra/json"
 require "json"
 require "sinatra/reloader" if development?
-require "pry"
+require "pry" if development? || test?
 require "faraday"
 require "dotenv/load"
-require "csv"
 
 set :bind, '0.0.0.0' 
 set :public_folder, File.join(File.dirname(__FILE__), "public")
-CURRENT_FILE_PATH = File.dirname(__FILE__)
-# server config, taught to add these at my boot-camp
-
 
 OPEN_WEATHER_API_KEY = ENV['OPEN_WEATHER_API_KEY']
+GOOGLE_CLOUD_MAP_API_KEY = ENV['GOOGLE_CLOUD_MAP_API_KEY']
 
 get "/" do
   erb :home
@@ -31,8 +28,21 @@ get "/api/v1/forecast" do
   json parsed_response
 end
 
+get "/api/v1/map" do
+  zip = params[:zip]
+  url = "https://maps.googleapis.com/maps/api/staticmap?center=#{zip}&size=400x400&key=#{GOOGLE_CLOUD_MAP_API_KEY}"
+
+  api_response = Faraday.get(url)
+  parsed_response = api_response.body
+
+  status 200
+  content_type :png
+ 
+  parsed_response
+end
+
 get "/past_searches" do
-  past_searches = CSV.readlines("past_searches.csv", headers: true)
+  past_searches = File.readlines("past_searches.txt", headers: true)
 
   status 200
   content_type :json
@@ -40,29 +50,18 @@ get "/past_searches" do
   json past_searches
 end
 
-
 post "/past_searches/new" do
   zip = request.body.rewind && request.body.read
   zip = "#{zip[8]}#{zip[9]}#{zip[10]}#{zip[11]}#{zip[12]}"
-  # pulls the response from the fetch request and isolates the zip code
 
-  if zip.length == 5
-    CSV.open("past_searches.csv", "a") do |csv|
-      csv.puts([zip])
+  if zip.length == 5 && zip.to_i > 0 && zip.to_i.is_a?(Numeric)
+    File.open("past_searches.txt", "a") do |file|
+      file.puts([zip])
     end
   end
 
-  # parsed_response = JSON.parse(zip)
-
-  # status 200
-  # content_type :json
-
-  # json parsed_response
-
 end
 
-
-# If the user tries to enter an unavailable path, this will route them to the available page
 get "*" do
   erb :home
 end
