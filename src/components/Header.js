@@ -2,7 +2,7 @@ import React from "react"
 import Form from "./Form"
 import PastSearches from "./PastSearches"
 
-const Output = (props) => {
+const Header = (props) => {
   return (
     <>
       <h1>Welcome to the USA weather map machine!</h1>
@@ -19,4 +19,4 @@ const Output = (props) => {
   )
 }
 
-export default Output
+export default Header

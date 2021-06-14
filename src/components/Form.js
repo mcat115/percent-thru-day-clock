@@ -16,7 +16,7 @@ const form = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <label htmlFor="zip">
-        What zip code would you like to know the weather for?
+        What zip code would you like to see a map of and know the weather for?
       </label>
       <input id="zip" type="text" value={formZip} onChange={handleInput} />
       <input type="submit" />

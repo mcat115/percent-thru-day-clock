@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import Output from "./Output"
+import Header from "./Header"
 
 const App = (props) => {
   const [currentForecast, setCurrentForecast] = useState({
@@ -19,6 +19,24 @@ const App = (props) => {
       }
       const weatherForecast = await response.json()
       setCurrentForecast(weatherForecast)
+    } catch (err) {
+      console.error(`Error in fetch: ${err.message}`)
+    }
+  }
+
+  const fetchMap = async (zip) => {
+    try {
+      const response = await fetch(`api/v1/map?zip=${zip}`)
+      if (!response.ok) {
+        const errorMessage = `${response.status} (${response.statusText})`
+        const error = new Error(errorMessage)
+        throw error
+      }
+      // const map = await response.json()
+      const map = await response.blob()
+      let img = URL.createObjectURL(map)
+      // debugger
+      document.getElementById("img").setAttribute("src", img)
     } catch (err) {
       console.error(`Error in fetch: ${err.message}`)
     }
@@ -60,8 +78,7 @@ const App = (props) => {
       }
       // const postedZip = (await response.json()).toString()
       // let currentList = pastSearches
-      // currentList.push(postedZip)
-      // setPastSearches(currentList)
+      // setPastSearches(currentList.push(postedZip))
     } catch (error) {
       console.error(`Error in Fetch: ${error.message}`)
     }
@@ -69,11 +86,13 @@ const App = (props) => {
 
   useEffect(() => {
     fetchWeather("02109")
+    fetchMap("02109")
     fetchPastSearches()
   }, [])
 
   const onSubmission = (zip) => {
     fetchWeather(zip)
+    fetchMap(zip)
     postSearch(zip)
   }
 
@@ -87,7 +106,7 @@ const App = (props) => {
 
     return (
       <div>
-        <Output
+        <Header
           onSubmission={onSubmission}
           pastSearches={pastSearches}
           fetchWeather={fetchWeather}
@@ -103,15 +122,15 @@ const App = (props) => {
   } else {
     return (
       <div>
-        <Output
+        <Header
           onSubmission={onSubmission}
           pastSearches={pastSearches}
           fetchWeather={fetchWeather}
         />
         <h2>We're sorry, we couldn't find anything!</h2>
         <p>
-          Make sure the zip code is comprised of 5 digits, and is a valid
-          location in the United States.
+          Make sure the zip code is comprised of 5 numeric digits, and is a
+          valid location in the United States.
         </p>
       </div>
     )

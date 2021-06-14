@@ -14,6 +14,7 @@ CURRENT_FILE_PATH = File.dirname(__FILE__)
 
 
 OPEN_WEATHER_API_KEY = ENV['OPEN_WEATHER_API_KEY']
+GOOGLE_CLOUD_MAP_API_KEY = ENV['GOOGLE_CLOUD_MAP_API_KEY']
 
 get "/" do
   erb :home
@@ -31,6 +32,23 @@ get "/api/v1/forecast" do
   json parsed_response
 end
 
+get "/api/v1/map" do
+  zip = params[:zip]
+  url = "https://maps.googleapis.com/maps/api/staticmap?center=#{zip}&size=400x400&key=#{GOOGLE_CLOUD_MAP_API_KEY}"
+
+  api_response = Faraday.get(url)
+  # parsed_response = JSON.parse(api_response.body)
+  parsed_response = api_response.body
+
+
+  status 200
+  content_type :png
+  # binding.pry
+
+  # json parsed_response
+  parsed_response
+end
+
 get "/past_searches" do
   past_searches = CSV.readlines("past_searches.csv", headers: true)
 
@@ -44,7 +62,7 @@ end
 post "/past_searches/new" do
   zip = request.body.rewind && request.body.read
   zip = "#{zip[8]}#{zip[9]}#{zip[10]}#{zip[11]}#{zip[12]}"
-  # pulls the response from the fetch request and isolates the zip code
+  # pulls the response from the fetch request as a string and isolates the zip code
 
   if zip.length == 5
     CSV.open("past_searches.csv", "a") do |csv|
