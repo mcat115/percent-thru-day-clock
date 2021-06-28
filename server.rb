@@ -53,6 +53,7 @@ end
 post "/past_searches/new" do
   zip = request.body.rewind && request.body.read
   zip = "#{zip[8]}#{zip[9]}#{zip[10]}#{zip[11]}#{zip[12]}"
+  #I was confused on getting the zip to save in params, so I did this instead
 
   if zip.length == 5 && zip.to_i > 0 && zip.to_i.is_a?(Numeric)
     File.open("past_searches.txt", "a") do |file|
