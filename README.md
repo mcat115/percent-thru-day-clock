@@ -2,6 +2,8 @@ Coding Challenge for DynamiCare Health Software Engineering Internship
 
 This is a small app, so I decided to use the framework Sinatra instead of Rails. I also didn't use a database for the same reason. The only pieces of data being saved are strings of 5 characters, with no relationships or associations between them or anything else, so a txt file seemed like it would do the trick.
 
+Dependency: Made with Ruby 2.7.3 
+
 To create locally:
 
 - Open a terminal and cd to the folder that will house this project's folder
