@@ -11,4 +11,5 @@ To create locally:
 Then in two seperate terminals:
 - `ruby server.rb`
 - `yarn start`
+
 It should be running on localhost:4567!
