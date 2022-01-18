@@ -1,136 +1,39 @@
-import React, { useState, useEffect } from "react"
-import Header from "./Header"
+import React, { useState } from "react"
 
-const App = (props) => {
-  const [currentForecast, setCurrentForecast] = useState({
-    main: {},
-    weather: [{}],
-    wind: {},
-  })
-  const [pastSearches, setPastSearches] = useState([])
+export const App = (props) => {
+  let currentYear = prompt("What year is it?")
+  let savingsStatus = prompt(
+    'Is the clock currently in daylight savings time? (March - November) Type "yes" or "no"'
+  )
+  let timeVar
 
-  const fetchWeather = async (zip) => {
-    try {
-      const response = await fetch(`api/v1/forecast?zip=${zip}`)
-      if (!response.ok) {
-        const errorMessage = `${response.status} (${response.statusText})`
-        const error = new Error(errorMessage)
-        throw error
-      }
-      const weatherForecast = await response.json()
-      setCurrentForecast(weatherForecast)
-    } catch (err) {
-      console.error(`Error in fetch: ${err.message}`)
-    }
-  }
-
-  const fetchMap = async (zip) => {
-    try {
-      const response = await fetch(`api/v1/map?zip=${zip}`)
-      if (!response.ok) {
-        const errorMessage = `${response.status} (${response.statusText})`
-        const error = new Error(errorMessage)
-        throw error
-      }
-      const map = await response.blob()
-      let img = URL.createObjectURL(map)
-      document.getElementById("img").setAttribute("src", img)
-    } catch (err) {
-      console.error(`Error in fetch: ${err.message}`)
-    }
-  }
-
-  const fetchPastSearches = async () => {
-    try {
-      const response = await fetch("/past_searches")
-      if (!response.ok) {
-        const errorMessage = `${response.status} (${response.statusText})`
-        const error = new Error(errorMessage)
-        throw error
-      }
-      let searches = await response.json()
-      let output = searches.map((zip) => {
-        return zip.replace("\n", "")
-      })
-      setPastSearches(output)
-    } catch (err) {
-      console.error(`Error in fetch: ${err.message}`)
-    }
-  }
-
-  const postSearch = async (zip) => {
-    try {
-      const response = await fetch("/past_searches/new", {
-        credentials: "same-origin",
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ zip }),
-      })
-      if (!response.ok) {
-        const errorMessage = `${response.status} (${response.statusText})`
-        throw new Error(errorMessage)
-      }
-    } catch (error) {
-      console.error(`Error in Fetch: ${error.message}`)
-    }
-  }
-
-  useEffect(() => {
-    fetchWeather("02109")
-    fetchMap("02109")
-    fetchPastSearches()
-  }, [])
-
-  const onSubmission = (zip) => {
-    fetchWeather(zip)
-    fetchMap(zip)
-    postSearch(zip)
-  }
-
-  if (currentForecast.message !== "city not found") {
-    const convertKToF = (temp) => {
-      return (temp - 273.15) * (9 / 5) + 31
-    }
-
-    let actualTemp = convertKToF(currentForecast.main.temp).toFixed(2)
-    let feelsLike = convertKToF(currentForecast.main.feels_like).toFixed(2)
-
-    return (
-      <div>
-        <Header
-          onSubmission={onSubmission}
-          pastSearches={pastSearches}
-          fetchWeather={fetchWeather}
-          fetchMap={fetchMap}
-        />
-        <h2>{currentForecast.name} Weather</h2>
-        <p>Temperature: {actualTemp} degrees Farenheit</p>
-        <p>Feels Like: {feelsLike} degrees Farenheit</p>
-        <p>Sky: {currentForecast.weather[0].description}</p>
-        <p>Humidity: {currentForecast.main.humidity}%</p>
-        <p>Wind Speed: {currentForecast.wind.speed} mph</p>
-      </div>
-    )
+  if (
+    savingsStatus.toLowerCase() === "y" ||
+    savingsStatus.toLowerCase() === "yes"
+  ) {
+    timeVar = 14400000
   } else {
-    return (
-      <div>
-        <Header
-          onSubmission={onSubmission}
-          pastSearches={pastSearches}
-          fetchWeather={fetchWeather}
-          fetchMap={fetchMap}
-        />
-        <h2>We're sorry, we couldn't find any weather data!</h2>
-        <p>
-          Make sure the zip code is comprised of 5 numeric digits, and is a
-          valid location in the United States.
-        </p>
-      </div>
-    )
+    timeVar = 18000000
   }
+
+  let currentTime = (year) => {
+    let time =
+      (Date.now() - timeVar - (year - 1970) * 365 * 24 * 60 * 60 * 1000) /
+      1000 /
+      60 /
+      60 /
+      24
+    time -= Math.floor(time)
+    time *= 100
+
+    return time
+  }
+
+  let message = `You are currently ${currentTime(currentYear).toFixed(
+    2
+  )}% through the day! (Eastern Time)`
+
+  return <h1>{message}</h1>
 }
 
 export default App

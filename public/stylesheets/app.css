@@ -2,12 +2,3 @@
   font-family: sans-serif;
   background-color: rgb(223, 241, 238);
 }
-
-.search {
-  cursor: pointer;
-  margin-right: 90%;
-}
-
-.search:hover {
-  color: rgb(255, 30, 0);
-}
