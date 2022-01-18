@@ -8,6 +8,7 @@ To create locally:
 - `git clone https://github.com/mcat115/percent-thru-day-clock`
 - `bundle install`
 - `yarn install`
+
 Then in two seperate terminals:
 - `ruby server.rb`
 - `yarn start`
