@@ -1,39 +1,43 @@
 import React, { useState } from "react"
 
 export const App = (props) => {
-  let currentYear = prompt("What year is it?")
-  let savingsStatus = prompt(
-    'Is the clock currently in daylight savings time? (March - November) Type "yes" or "no"'
-  )
-  let timeVar
+  const [timeMessage, setTimeMessage] = useState("Loading...")
+  const [currentYear, setYear] = useState("Loading...")
+  const [timeVar, setTimeVar] = useState("Loading...")
 
-  if (
-    savingsStatus.toLowerCase() === "y" ||
-    savingsStatus.toLowerCase() === "yes"
-  ) {
-    timeVar = 14400000
-  } else {
-    timeVar = 18000000
+  window.onload = () => {
+    setYear(prompt("What year is it?"))
+    let savingsStatus = (prompt(
+      'Is the clock currently in daylight savings time? (March - November) Type "yes" or "no"'
+    ))
+    
+    if (
+      savingsStatus.toLowerCase() === "y" ||
+      savingsStatus.toLowerCase() === "yes"
+    ) {
+      setTimeVar(14400000)
+    } else {
+      setTimeVar(18000000)
+    }
   }
 
-  let currentTime = (year) => {
+  let currentTime = (year, daylightSavingsAdjustment) => {
     let time =
-      (Date.now() - timeVar - (year - 1970) * 365 * 24 * 60 * 60 * 1000) /
+      (Date.now() - daylightSavingsAdjustment - (year - 1970) * 365 * 24 * 60 * 60 * 1000) /
       1000 /
       60 /
       60 /
       24
     time -= Math.floor(time)
-    time *= 100
 
-    return time
+    return time *= 100
   }
 
-  let message = `You are currently ${currentTime(currentYear).toFixed(
-    2
-  )}% through the day! (Eastern Time)`
+  setInterval(() => {
+    setTimeMessage(`You are currently ${currentTime(currentYear, timeVar).toFixed(2)}% through the day! (Eastern Time)`)
+  }, 5000);
 
-  return <h1>{message}</h1>
+  return <h1>{timeMessage}</h1>
 }
 
 export default App
