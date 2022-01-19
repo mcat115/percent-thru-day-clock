@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-export const App = (props) => {
+const App = (props) => {
   const [timeMessage, setTimeMessage] = useState("Loading...")
   const [currentYear, setYear] = useState("Loading...")
   const [timeVar, setTimeVar] = useState("Loading...")
