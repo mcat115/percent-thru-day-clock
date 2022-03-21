@@ -6,27 +6,24 @@ const App = (props) => {
 
   window.onload = () => {
     setYear(prompt("What year is it?"))
-
-    setTimeMessage(`You are currently ${currentTime(currentYear).toFixed(2)}% through the day! (Eastern Time)`)
   }
 
   let currentTime = (year) => {
     if (year !== null) {
       let time =
-        (Date.now() - 14400000 - (year - 1970) * 365) /
-        1000 /
-        60 /
-        60 /
-        24
+        (Date.now() - 14400000 - (year - 1970) * 365) / 1000 / 60 / 60 / 24
       time -= Math.floor(time)
 
-      return time *= 100
-    } 
+      return (time *= 100)
+    }
     return null
   }
 
   setInterval(() => {
-    setTimeMessage(`You are currently ${currentTime(currentYear).toFixed(2)}% through the day! (Eastern Time)`)
+    setTimeMessage(
+      `You are currently ${currentTime(currentYear).toFixed(
+      2)}% through the day! (Eastern Time)`
+    )
   }, 5000)
 
   return <h1>{timeMessage}</h1>
