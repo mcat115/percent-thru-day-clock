@@ -16,7 +16,6 @@ const App = (props) => {
 
       return (time *= 100)
     }
-    return null
   }
 
   setInterval(() => {
